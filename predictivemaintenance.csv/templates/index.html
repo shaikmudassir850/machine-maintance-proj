@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Predictive Maintenance</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 10%, #163b54, transparent 35%),
+                radial-gradient(circle at 90% 90%, #10354a, transparent 35%),
+                #07131d;
+            color: white;
+            padding: 35px 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 18px;
+
+            background: linear-gradient(135deg, #20b89b, #2478c9);
+
+            font-size: 35px;
+
+            box-shadow: 0 10px 35px rgba(32,184,155,0.25);
+        }
+
+        .header h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #8fa5b5;
+            font-size: 16px;
+        }
+
+        .card {
+            background: rgba(12, 29, 43, 0.95);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            border-radius: 22px;
+
+            padding: 35px;
+
+            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 21px;
+            font-weight: bold;
+
+            margin-bottom: 25px;
+        }
+
+        .section-title span {
+            width: 7px;
+            height: 27px;
+
+            background: #20b89b;
+
+            border-radius: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        label {
+            display: block;
+
+            color: #aebdca;
+
+            font-size: 13px;
+
+            margin-bottom: 9px;
+
+            transition: 0.25s;
+        }
+
+        .input-group:focus-within label {
+            color: #20b89b;
+        }
+
+        input,
+        select {
+
+            width: 100%;
+
+            padding: 15px 16px;
+
+            border-radius: 12px;
+
+            border: 1px solid #294152;
+
+            background: #091b29;
+
+            color: white;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.25s;
+        }
+
+        input::placeholder {
+            color: #5f7383;
+        }
+
+        input:hover,
+        select:hover {
+            border-color: #3c667d;
+        }
+
+        input:focus,
+        select:focus {
+
+            border-color: #20b89b;
+
+            box-shadow: 0 0 0 3px rgba(32,184,155,0.12);
+
+            transform: translateY(-1px);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .unit {
+
+            position: absolute;
+
+            right: 15px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #647b8c;
+
+            font-size: 12px;
+
+            pointer-events: none;
+        }
+
+        button {
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            padding: 17px;
+
+            border: none;
+
+            border-radius: 13px;
+
+            background: linear-gradient(
+                135deg,
+                #20b89b,
+                #1977c5
+            );
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+
+            box-shadow: 0 12px 30px rgba(32,184,155,0.18);
+        }
+
+        button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 16px 35px rgba(32,184,155,0.3);
+        }
+
+        .result {
+
+            margin-top: 30px;
+
+            padding: 25px;
+
+            border-radius: 17px;
+
+            border: 1px solid;
+        }
+
+        .result.safe {
+
+            background: rgba(32,184,155,0.08);
+
+            border-color: rgba(32,184,155,0.35);
+        }
+
+        .result.danger {
+
+            background: rgba(239,68,68,0.08);
+
+            border-color: rgba(239,68,68,0.35);
+        }
+
+        .result-title {
+
+            font-size: 23px;
+
+            font-weight: bold;
+
+            margin-bottom: 20px;
+        }
+
+        .safe .result-title {
+            color: #35d6ae;
+        }
+
+        .danger .result-title {
+            color: #ff6b6b;
+        }
+
+        .suggestion-title {
+
+            color: #c4d2dd;
+
+            font-size: 14px;
+
+            margin-bottom: 12px;
+        }
+
+        .suggestions {
+
+            list-style: none;
+        }
+
+        .suggestions li {
+
+            padding: 11px 0;
+
+            color: #aebdca;
+
+            font-size: 14px;
+
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .suggestions li:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions li::before {
+
+            content: "✓";
+
+            color: #20b89b;
+
+            font-weight: bold;
+
+            margin-right: 10px;
+        }
+
+        .danger .suggestions li::before {
+
+            content: "→";
+
+            color: #ff7777;
+        }
+
+        .error {
+
+            margin-top: 25px;
+
+            padding: 15px;
+
+            border-radius: 12px;
+
+            background: rgba(239,68,68,0.1);
+
+            border: 1px solid rgba(239,68,68,0.3);
+
+            color: #ff8585;
+
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 29px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <div class="icon">
+            ⚙
+        </div>
+
+        <h1>Predictive Maintenance</h1>
+
+        <p>
+            Intelligent machine failure prediction
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-title">
+            <span></span>
+            Machine Parameters
+        </div>
+
+
+        <form action="/predict" method="POST">
+
+
+            <div class="form-grid">
+
+
+                <!-- TYPE -->
+
+                <div class="input-group">
+
+                    <label for="type">
+                        Machine Type
+                    </label>
+
+                    <select
+                        id="type"
+                        name="type"
+                        required>
+
+                        <option value="" disabled selected>
+                            Select machine type
+                        </option>
+
+                        <option value="L">
+                            L — Low
+                        </option>
+
+                        <option value="M">
+                            M — Medium
+                        </option>
+
+                        <option value="H">
+                            H — High
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- AIR TEMPERATURE -->
+
+                <div class="input-group">
+
+                    <label for="air_temperature">
+                        Air Temperature
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="number"
+                            id="air_temperature"
+                            name="air_temperature"
+                            step="0.1"
+                            placeholder="Enter air temperature"
+                            required>
+
+                        <span class="unit">K</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROCESS TEMPERATURE -->
+
+                <div class="input-group">
+
+                    <label for="process_temperature">
+                        Process Temperature
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="number"
+                            id="process_temperature"
+                            name="process_temperature"
+                            step="0.1"
+                            placeholder="Enter process temperature"
+                            required>
+
+                        <span class="unit">K</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROTATIONAL SPEED -->
+
+                <div class="input-group">
+
+                    <label for="rotational_speed">
+                        Rotational Speed
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="number"
+                            id="rotational_speed"
+                            name="rotational_speed"
+                            step="1"
+                            placeholder="Enter rotational speed"
+                            required>
+
+                        <span class="unit">RPM</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TORQUE -->
+
+                <div class="input-group">
+
+                    <label for="torque">
+                        Torque
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="number"
+                            id="torque"
+                            name="torque"
+                            step="0.1"
+                            placeholder="Enter torque"
+                            required>
+
+                        <span class="unit">Nm</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOOL WEAR -->
+
+                <div class="input-group">
+
+                    <label for="tool_wear">
+                        Tool Wear
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="number"
+                            id="tool_wear"
+                            name="tool_wear"
+                            step="1"
+                            min="0"
+                            placeholder="Enter tool wear"
+                            required>
+
+                        <span class="unit">min</span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <button type="submit">
+                Predict Machine Failure
+            </button>
+
+        </form>
+
+
+        {% if result %}
+
+        <div class="result {{ status }}">
+
+            <div class="result-title">
+                {{ result }}
+            </div>
+
+            <div class="suggestion-title">
+                Recommended next steps
+            </div>
+
+            <ul class="suggestions">
+
+                {% for item in suggestions %}
+
+                <li>
+                    {{ item }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
+
+
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
